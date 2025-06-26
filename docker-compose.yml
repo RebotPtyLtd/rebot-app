@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  wiremock:
+    image: wiremock/wiremock:3.4.2
+    container_name: wiremock
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./backend/wiremock-mappings.json:/home/wiremock/mappings/mapping.json
+    command: [
+      "--global-response-templating",
+      "--verbose"
+    ]
+
+  sveltekit:
+    build:
+      context: ./my-office-app
+      dockerfile: Dockerfile  
+
+    container_name: sveltekit
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./my-office-app:/app
+      - /app/node_modules
+    working_dir: /app
+    command: npm run dev -- --host
+    depends_on:
+      - wiremock
