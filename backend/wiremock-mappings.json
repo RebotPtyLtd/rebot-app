@@ -1,0 +1,625 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "/api/offices"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "offices": [
+            {
+              "id": 1,
+              "name": "Downtown Branch",
+              "address": "463 Elm Dr, Downtown",
+              "settings": {
+                "allowPublicComments": false,
+                "maxItemsPerUser": 77,
+                "timezone": "America/New_York"
+              },
+              "adminId": 1
+            },
+            {
+              "id": 2,
+              "name": "Westside Office",
+              "address": "840 Elm Dr, Northside",
+              "settings": {
+                "allowPublicComments": false,
+                "maxItemsPerUser": 131,
+                "timezone": "America/Denver"
+              },
+              "adminId": 4
+            },
+            {
+              "id": 3,
+              "name": "Tech Hub",
+              "address": "588 Elm Dr, Westside",
+              "settings": {
+                "allowPublicComments": false,
+                "maxItemsPerUser": 94,
+                "timezone": "America/New_York"
+              },
+              "adminId": 7
+            },
+            {
+              "id": 4,
+              "name": "Central Plaza",
+              "address": "727 Pine Rd, Downtown",
+              "settings": {
+                "allowPublicComments": false,
+                "maxItemsPerUser": 94,
+                "timezone": "America/Chicago"
+              },
+              "adminId": 10
+            },
+            {
+              "id": 5,
+              "name": "Harbor View",
+              "address": "417 Pine Rd, Westside",
+              "settings": {
+                "allowPublicComments": true,
+                "maxItemsPerUser": 116,
+                "timezone": "America/Los_Angeles"
+              },
+              "adminId": 14
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/offices/([0-9]+)"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "{{request.pathSegments.[2]}}",
+          "name": "Office {{request.pathSegments.[2]}}",
+          "address": "Sample Address for Office {{request.pathSegments.[2]}}",
+          "settings": {
+            "allowPublicComments": true,
+            "maxItemsPerUser": 100,
+            "timezone": "America/New_York"
+          }
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "url": "/api/offices",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "{{randomValue length=2 type='NUMERIC'}}",
+          "name": "{{jsonPath request.body '$.name'}}",
+          "address": "{{jsonPath request.body '$.address'}}",
+          "settings": {
+            "allowPublicComments": false,
+            "maxItemsPerUser": 100,
+            "timezone": "America/New_York"
+          },
+          "createdAt": "{{now format='yyyy-MM-dd HH:mm:ss'}}"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "PUT",
+        "urlPattern": "/api/offices/([0-9]+)",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "{{request.pathSegments.[2]}}",
+          "name": "{{jsonPath request.body '$.name'}}",
+          "address": "{{jsonPath request.body '$.address'}}",
+          "settings": "{{jsonPath request.body '$.settings'}}",
+          "updatedAt": "{{now format='yyyy-MM-dd HH:mm:ss'}}"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "DELETE",
+        "urlPattern": "/api/offices/([0-9]+)",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 204
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/api/users"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "users": [
+            {
+              "id": 1,
+              "username": "admin_office_1",
+              "email": "admin1@company.com",
+              "role": "OfficeAdmin",
+              "officeId": 1,
+              "firstName": "Grace",
+              "lastName": "Johnson",
+              "createdAt": "2025-06-11T03:32:34.877Z"
+            },
+            {
+              "id": 2,
+              "username": "user1_office_1",
+              "email": "user1.office1@company.com",
+              "role": "User",
+              "officeId": 1,
+              "firstName": "Mia",
+              "lastName": "Johnson",
+              "createdAt": "2025-05-25T03:32:34.880Z"
+            },
+            {
+              "id": 3,
+              "username": "user2_office_1",
+              "email": "user2.office1@company.com",
+              "role": "User",
+              "officeId": 1,
+              "firstName": "Jane",
+              "lastName": "Lewis",
+              "createdAt": "2025-05-24T03:32:34.880Z"
+            },
+            {
+              "id": 4,
+              "username": "admin_office_2",
+              "email": "admin2@company.com",
+              "role": "OfficeAdmin",
+              "officeId": 2,
+              "firstName": "Alice",
+              "lastName": "Jackson",
+              "createdAt": "2025-05-17T03:32:34.880Z"
+            },
+            {
+              "id": 5,
+              "username": "user1_office_2",
+              "email": "user1.office2@company.com",
+              "role": "User",
+              "officeId": 2,
+              "firstName": "Alice",
+              "lastName": "Martinez",
+              "createdAt": "2025-05-11T03:32:34.880Z"
+            },
+            {
+              "id": 6,
+              "username": "user2_office_2",
+              "email": "user2.office2@company.com",
+              "role": "User",
+              "officeId": 2,
+              "firstName": "Bob",
+              "lastName": "Davis",
+              "createdAt": "2025-05-19T03:32:34.880Z"
+            },
+            {
+              "id": 7,
+              "username": "admin_office_3",
+              "email": "admin3@company.com",
+              "role": "OfficeAdmin",
+              "officeId": 3,
+              "firstName": "Blake",
+              "lastName": "Ramirez",
+              "createdAt": "2025-04-29T03:32:34.880Z"
+            },
+            {
+              "id": 8,
+              "username": "user1_office_3",
+              "email": "user1.office3@company.com",
+              "role": "User",
+              "officeId": 3,
+              "firstName": "Emma",
+              "lastName": "Miller",
+              "createdAt": "2025-05-05T03:32:34.880Z"
+            },
+            {
+              "id": 9,
+              "username": "user2_office_3",
+              "email": "user2.office3@company.com",
+              "role": "User",
+              "officeId": 3,
+              "firstName": "Paul",
+              "lastName": "Garcia",
+              "createdAt": "2025-05-04T03:32:34.880Z"
+            },
+            {
+              "id": 10,
+              "username": "admin_office_4",
+              "email": "admin4@company.com",
+              "role": "OfficeAdmin",
+              "officeId": 4,
+              "firstName": "Noah",
+              "lastName": "Lewis",
+              "createdAt": "2025-05-24T03:32:34.881Z"
+            },
+            {
+              "id": 11,
+              "username": "user1_office_4",
+              "email": "user1.office4@company.com",
+              "role": "User",
+              "officeId": 4,
+              "firstName": "Henry",
+              "lastName": "Brown",
+              "createdAt": "2025-05-09T03:32:34.881Z"
+            },
+            {
+              "id": 12,
+              "username": "user2_office_4",
+              "email": "user2.office4@company.com",
+              "role": "User",
+              "officeId": 4,
+              "firstName": "Ivy",
+              "lastName": "Anderson",
+              "createdAt": "2025-05-21T03:32:34.881Z"
+            },
+            {
+              "id": 13,
+              "username": "user3_office_4",
+              "email": "user3.office4@company.com",
+              "role": "User",
+              "officeId": 4,
+              "firstName": "Alex",
+              "lastName": "Clark",
+              "createdAt": "2025-06-20T03:32:34.881Z"
+            },
+            {
+              "id": 14,
+              "username": "admin_office_5",
+              "email": "admin5@company.com",
+              "role": "OfficeAdmin",
+              "officeId": 5,
+              "firstName": "Olivia",
+              "lastName": "Martin",
+              "createdAt": "2025-04-27T03:32:34.881Z"
+            },
+            {
+              "id": 15,
+              "username": "user1_office_5",
+              "email": "user1.office5@company.com",
+              "role": "User",
+              "officeId": 5,
+              "firstName": "Alice",
+              "lastName": "Harris",
+              "createdAt": "2025-06-19T03:32:34.881Z"
+            },
+            {
+              "id": 16,
+              "username": "user2_office_5",
+              "email": "user2.office5@company.com",
+              "role": "User",
+              "officeId": 5,
+              "firstName": "Karen",
+              "lastName": "Hernandez",
+              "createdAt": "2025-06-06T03:32:34.881Z"
+            },
+            {
+              "id": 17,
+              "username": "user3_office_5",
+              "email": "user3.office5@company.com",
+              "role": "User",
+              "officeId": 5,
+              "firstName": "John",
+              "lastName": "Smith",
+              "createdAt": "2025-06-06T03:32:34.881Z"
+            },
+            {
+              "id": 18,
+              "username": "user4_office_5",
+              "email": "user4.office5@company.com",
+              "role": "User",
+              "officeId": 5,
+              "firstName": "Tina",
+              "lastName": "Johnson",
+              "createdAt": "2025-06-13T03:32:34.881Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/offices/([0-9]+)/users"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "users": []
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "url": "/api/users",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "{{randomValue length=2 type='NUMERIC'}}",
+          "username": "{{jsonPath request.body '$.username'}}",
+          "email": "{{jsonPath request.body '$.email'}}",
+          "role": "{{jsonPath request.body '$.role'}}",
+          "officeId": "{{jsonPath request.body '$.officeId'}}",
+          "firstName": "{{jsonPath request.body '$.firstName'}}",
+          "lastName": "{{jsonPath request.body '$.lastName'}}",
+          "createdAt": "{{now format='yyyy-MM-dd HH:mm:ss'}}"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/offices/([0-9]+)/items"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "items": []
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/items/([0-9]+)"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "{{request.pathSegments.[2]}}",
+          "title": "Sample Item {{request.pathSegments.[2]}}",
+          "description": "This is a sample item description for item {{request.pathSegments.[2]}}",
+          "officeId": 1,
+          "createdBy": 2,
+          "createdAt": "2024-12-01T09:00:00Z",
+          "updatedAt": "2024-12-01T09:00:00Z"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "url": "/api/items",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "{{randomValue length=2 type='NUMERIC'}}",
+          "title": "{{jsonPath request.body '$.title'}}",
+          "description": "{{jsonPath request.body '$.description'}}",
+          "officeId": "{{jsonPath request.body '$.officeId'}}",
+          "createdBy": "{{jsonPath request.body '$.createdBy'}}",
+          "createdAt": "{{now format='yyyy-MM-dd HH:mm:ss'}}"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "PUT",
+        "urlPattern": "/api/items/([0-9]+)",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "{{request.pathSegments.[2]}}",
+          "title": "{{jsonPath request.body '$.title'}}",
+          "description": "{{jsonPath request.body '$.description'}}",
+          "updatedAt": "{{now format='yyyy-MM-dd HH:mm:ss'}}"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "DELETE",
+        "urlPattern": "/api/items/([0-9]+)",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 204
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/items/([0-9]+)/comments"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "comments": []
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "url": "/api/comments",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "{{randomValue length=2 type='NUMERIC'}}",
+          "itemId": "{{jsonPath request.body '$.itemId'}}",
+          "userId": "{{jsonPath request.body '$.userId'}}",
+          "content": "{{jsonPath request.body '$.content'}}",
+          "createdAt": "{{now format='yyyy-MM-dd HH:mm:ss'}}"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "PUT",
+        "urlPattern": "/api/comments/([0-9]+)",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "{{request.pathSegments.[2]}}",
+          "content": "{{jsonPath request.body '$.content'}}",
+          "updatedAt": "{{now format='yyyy-MM-dd HH:mm:ss'}}"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "DELETE",
+        "urlPattern": "/api/comments/([0-9]+)",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 204
+      }
+    },
+    {
+      "request": {
+        "method": "PATCH",
+        "urlPattern": "/api/offices/([0-9]+)/settings",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "officeId": "{{request.pathSegments.[2]}}",
+          "settings": "{{jsonPath request.body '$.settings'}}",
+          "updatedAt": "{{now format='yyyy-MM-dd HH:mm:ss'}}"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/api/auth/me",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .*"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": 1,
+          "username": "admin1",
+          "email": "admin1@company.com",
+          "role": "Admin",
+          "permissions": [
+            "create_office",
+            "manage_users",
+            "delete_office",
+            "manage_all_offices"
+          ]
+        }
+      }
+    }
+  ]
+}

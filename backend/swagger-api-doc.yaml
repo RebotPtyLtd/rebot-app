@@ -1,0 +1,382 @@
+openapi: 3.0.0
+info:
+  title: Office Management API
+  version: 1.0.0
+tags:
+  - name: Auth
+  - name: Offices
+  - name: Users
+  - name: Items
+  - name: Comments
+paths:
+  /api/auth/me:
+    get:
+      tags: [Auth]
+      summary: Get current authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Authenticated user info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /api/offices:
+    get:
+      tags: [Offices]
+      summary: List all offices
+      responses:
+        '200':
+          description: A list of offices
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offices:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Office'
+    post:
+      tags: [Offices]
+      summary: Create a new office
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfficeInput'
+      responses:
+        '201':
+          description: Office created
+
+  /api/offices/{id}:
+    get:
+      tags: [Offices]
+      summary: Get a specific office
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Office details
+    put:
+      tags: [Offices]
+      summary: Update an office
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfficeInput'
+      responses:
+        '200':
+          description: Office updated
+    delete:
+      tags: [Offices]
+      summary: Delete an office
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted successfully
+
+  /api/offices/{id}/settings:
+    patch:
+      tags: [Offices]
+      summary: Update office settings
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                settings:
+                  $ref: '#/components/schemas/OfficeSettings'
+      responses:
+        '200':
+          description: Settings updated
+
+  /api/users:
+    get:
+      tags: [Users]
+      summary: List all users
+      responses:
+        '200':
+          description: User list
+    post:
+      tags: [Users]
+      summary: Create a user
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: User created
+
+  /api/offices/{id}/users:
+    get:
+      tags: [Users]
+      summary: Get users for a specific office
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Users list
+
+  /api/offices/{id}/items:
+    get:
+      tags: [Items]
+      summary: Get items for a specific office
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Items list
+
+  /api/items:
+    post:
+      tags: [Items]
+      summary: Create an item
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemInput'
+      responses:
+        '201':
+          description: Item created
+
+  /api/items/{id}:
+    get:
+      tags: [Items]
+      summary: Get a specific item
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Item details
+    put:
+      tags: [Items]
+      summary: Update an item
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemInput'
+      responses:
+        '200':
+          description: Item updated
+    delete:
+      tags: [Items]
+      summary: Delete an item
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Item deleted
+
+  /api/items/{id}/comments:
+    get:
+      tags: [Comments]
+      summary: List comments for an item
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Comments list
+
+  /api/comments:
+    post:
+      tags: [Comments]
+      summary: Create a comment
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentInput'
+      responses:
+        '201':
+          description: Comment created
+
+  /api/comments/{id}:
+    put:
+      tags: [Comments]
+      summary: Update a comment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+      responses:
+        '200':
+          description: Comment updated
+    delete:
+      tags: [Comments]
+      summary: Delete a comment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Office:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        settings:
+          $ref: '#/components/schemas/OfficeSettings'
+        adminId:
+          type: integer
+    OfficeSettings:
+      type: object
+      properties:
+        allowPublicComments:
+          type: boolean
+        maxItemsPerUser:
+          type: integer
+        timezone:
+          type: string
+    OfficeInput:
+      allOf:
+        - $ref: '#/components/schemas/Office'
+        - required: [name, address, settings]
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        officeId:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    UserInput:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - required: [username, email, role, officeId, firstName, lastName]
+    ItemInput:
+      type: object
+      required: [title, description, officeId, createdBy]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        officeId:
+          type: integer
+        createdBy:
+          type: integer
+    CommentInput:
+      type: object
+      required: [itemId, userId, content]
+      properties:
+        itemId:
+          type: integer
+        userId:
+          type: integer
+        content:
+          type: string
