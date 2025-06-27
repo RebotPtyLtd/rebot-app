@@ -594,6 +594,48 @@
     },
     {
       "request": {
+        "method": "OPTIONS",
+        "url": "/api/auth/login"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS, DELETE, PUT",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "url": "/api/auth/login",
+        "bodyPatterns": [
+          {
+            "equalToJson": "{\"email\": \"admin@example.com\", \"password\": \"password123\"}",
+            "ignoreExtraElements": true
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        "jsonBody": {
+          "token": "mock-jwt-token-for-admin",
+          "user": {
+            "id": 1,
+            "email": "admin@example.com",
+            "username": "admin",
+            "role": "Admin"
+          }
+        }
+      }
+    },
+    {
+      "request": {
         "method": "GET",
         "url": "/api/auth/me",
         "headers": {
