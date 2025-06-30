@@ -1,18 +1,12 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  
-  export let isOpen = false;
-  export let itemName = '';
-  export let itemType = 'item';
-  
-  const dispatch = createEventDispatcher();
+  let { isOpen = $bindable(), itemName = $bindable(), itemType = $bindable(), confirm, cancel } = $props();
   
   function handleConfirm() {
-    dispatch('confirm');
+    confirm();
   }
   
   function handleCancel() {
-    dispatch('cancel');
+    cancel();
   }
 </script>
 

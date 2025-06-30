@@ -1,13 +1,8 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  
-  export let isOpen = false;
-  export let title = '';
-  
-  const dispatch = createEventDispatcher();
-  
+  let { isOpen = $bindable(), title = $bindable(), close } = $props();
+
   function handleBackdropClick() {
-    dispatch('close');
+    close();
   }
   
   function handleContentClick(event: Event) {

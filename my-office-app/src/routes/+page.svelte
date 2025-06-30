@@ -126,14 +126,6 @@
       closeDeleteModal();
     }
   }
-
-  function handleOfficeEdit(event: CustomEvent) {
-    openEditModal(event.detail);
-  }
-
-  function handleOfficeDelete(event: CustomEvent) {
-    openDeleteModal(event.detail);
-  }
 </script>
 
 <main class="p-6">
@@ -173,7 +165,7 @@
 <Modal 
   isOpen={showAddModal} 
   title="Add New Office"
-  on:close={closeAddModal}
+  close={closeAddModal}
 >
   <OfficeForm 
     bind:form={addForm}
@@ -188,7 +180,7 @@
 <Modal 
   isOpen={showEditModal} 
   title="Edit Office"
-  on:close={closeEditModal}
+  close={closeEditModal}
 >
   <OfficeForm 
     bind:form={editForm}
@@ -204,6 +196,6 @@
   isOpen={showDeleteModal}
   itemName={deletingOffice?.name || ''}
   itemType="Office"
-  on:confirm={handleDeleteConfirm}
-  on:cancel={closeDeleteModal}
+  confirm={handleDeleteConfirm}
+  cancel={closeDeleteModal}
 />
