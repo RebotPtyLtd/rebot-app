@@ -82,5 +82,13 @@ export async function deleteUser(id: number) {
   const res = await authenticatedFetch(`${BASE_URL}/users/${id}`, {
     method: 'DELETE'
   });
-  return await res.json();
+
+  if (!res.ok){
+    throw new error(`Failed to delete user: ${res.status}`);
+  }
+
+  if (res.status !== 204){
+    return await res.json();
+  }
+  return;
 }

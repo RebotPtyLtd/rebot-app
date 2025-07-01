@@ -1,15 +1,19 @@
+
+
 <script lang="ts">
   import { onMount } from 'svelte';
   import {
     getUsers,
     createUser,
     updateUser,
+    deleteUser,
     type UserPayload
   } from '$lib/api';
   import { isAuthenticated } from '$lib/auth';
 
   let users: UserPayload[] = [];
   let editingId: number | null = null;
+  let deletedUserIds: number[] = [];
   let editUser: UserPayload = {
     username: '',
     email: '',
@@ -74,11 +78,32 @@
     }
   }
 
+  function isNotDeleted(user: UserPayload) {
+    return user.id !== undefined && !deletedUserIds.includes(user.id);
+  }
+  
+  async function handleDelete(userId: number) {
+    if (!confirm('Are you sure you want to delete this user?')) return;
+
+    try {
+      await deleteUser(userId);
+
+
+      deletedUserIds = [...deletedUserIds, userId];
+      console.log('User is deleted successfully!');
+    } catch (err) {
+      console.error('Failed to delete user:', err);
+    }
+  }
+
   onMount(async() => {
     if (isAuthenticated()){
         try {
             const data = await getUsers();
-            users = data.users;
+            users = data.users.map((u,i) => ({
+              ...u,
+              id: u.id ?? i + 1
+            }));
         } catch (err: any) {
           error = err.message;
         }
@@ -112,11 +137,11 @@
 <table>
   <thead>
     <tr>
-      <th>Username</th><th>Email</th><th>Role</th><th>Office</th><th>Actions</th>
+      <th>User Id</th><th>Username</th><th>Email</th><th>Role</th><th>Office</th><th>Actions</th>
     </tr>
   </thead>
   <tbody>
-    {#each users as user}
+    {#each users.filter(user => !deletedUserIds.includes(user.id)) as user}
       <tr>
         {#if editingId === user.id}
           <td><input bind:value={editUser.username} /></td>
@@ -133,15 +158,17 @@
             <button on:click={() => (editingId = null)}>Cancel</button>
           </td>
         {:else}
+          <td>{user.id}</td>
           <td>{user.username}</td>
           <td>{user.email}</td>
           <td>{user.role}</td>
           <td>{user.officeId}</td>
           <td>
             <button on:click={() => startEdit(user)}>Edit</button>
+            <button on:click={() => handleDelete(user.id)}>Delete</button>
           </td>
         {/if}
-      </tr>    
+      </tr>   
     {/each}
   </tbody>
 </table>
