@@ -397,6 +397,47 @@
         }
       }
     },
+    {      
+      "request": {
+      "method": "PUT",
+      "urlPattern": "/api/users/\\d+",
+      "headers": {
+        "Authorization": {
+          "matches": "Bearer .*"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "jsonBody": {
+        "id": "{{request.pathSegments.[2]}}",
+        "username": "{{jsonPath request.body '$.username'}}",
+        "email": "{{jsonPath request.body '$.email'}}",
+        "role": "{{jsonPath request.body '$.role'}}",
+        "officeId": "{{jsonPath request.body '$.officeId'}}",
+        "firstName": "{{jsonPath request.body '$.firstName'}}",
+        "lastName": "{{jsonPath request.body '$.lastName'}}",
+        "updatedAt": "{{now format='yyyy-MM-dd HH:mm:ss'}}"
+      }
+    }
+  },
+  {
+    "request": {
+      "method": "DELETE",
+      "urlPattern": "/api/users/\\d+",
+      "headers": {
+        "Authorization": {
+          "matches": "Bearer .*"
+        }
+      }
+    },
+    "response": {
+      "status": 204
+    }
+},
     {
       "request": {
         "method": "GET",

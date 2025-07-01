@@ -45,3 +45,42 @@ export async function fetchItemDetails(itemId: number) {
   const res = await authenticatedFetch(`${BASE_URL}/items/${itemId}`);
   return await res.json();
 }
+
+// USER MENU
+
+export interface UserPayload {
+  username: string;
+  email: string;
+  role: 'User' | 'Admin' | string;
+  officeId: number;
+  firstName: string;
+  lastName: string;
+}
+
+export async function getUsers() {
+  const res = await authenticatedFetch(`${BASE_URL}/users`);
+  return await res.json();
+}
+
+export async function createUser(user: UserPayload) {
+  const res = await authenticatedFetch(`${BASE_URL}/users`, {
+      method: 'POST',
+      body: JSON.stringify(user)
+  });
+  return await res.json();
+}
+
+export async function updateUser(id: number, user: UserPayload) {
+  const res = await authenticatedFetch(`${BASE_URL}/users/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(user)
+  });
+  return await res.json();
+}
+
+export async function deleteUser(id: number) {
+  const res = await authenticatedFetch(`${BASE_URL}/users/${id}`, {
+    method: 'DELETE'
+  });
+  return await res.json();
+}

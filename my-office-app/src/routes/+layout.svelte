@@ -25,7 +25,11 @@
     logout();
     goto('/login');
   }
+
 </script>
+
+
+
 
 {#if isAuthenticated || $page.url.pathname === '/login'}
   <div class="min-h-screen flex flex-col">
@@ -50,3 +54,5 @@
     <p>Redirecting to login...</p>
   </div>
 {/if}
+
+
