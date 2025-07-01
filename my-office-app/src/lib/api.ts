@@ -84,7 +84,7 @@ export async function deleteUser(id: number) {
   });
 
   if (!res.ok){
-    throw new error(`Failed to delete user: ${res.status}`);
+    throw new Error(`Failed to delete user: ${res.status}`);
   }
 
   if (res.status !== 204){

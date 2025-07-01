@@ -7,6 +7,7 @@
     createUser,
     updateUser,
     deleteUser,
+    fetchOffices,
     type UserPayload
   } from '$lib/api';
   import { isAuthenticated } from '$lib/auth';
@@ -14,6 +15,7 @@
   let users: UserPayload[] = [];
   let editingId: number | null = null;
   let deletedUserIds: number[] = [];
+  let offices: { id: number, name?: string } [] = [];
   let editUser: UserPayload = {
     username: '',
     email: '',
@@ -33,6 +35,12 @@
   };
 
   async function handleCreate() {
+
+    if (hasMaxUsersInOffice(newUser.officeId)) {
+        console.error(`Office ${newUser.officeId} already has 5 users.`);
+        return; 
+    }
+
     try {
         const created = await createUser(newUser);
         const tempId = Math.max(0, ...users.map(u=> u.id ?? 0)) + 1;
@@ -96,6 +104,11 @@
     }
   }
 
+  function hasMaxUsersInOffice(officeId: number): boolean {
+    const count = users.filter(u => u.officeId === officeId).length;
+    return count >= 5;
+  }
+
   onMount(async() => {
     if (isAuthenticated()){
         try {
@@ -104,6 +117,10 @@
               ...u,
               id: u.id ?? i + 1
             }));
+
+            const officeData = await fetchOffices();
+            offices = officeData.offices ?? officeData;
+
         } catch (err: any) {
           error = err.message;
         }
@@ -127,7 +144,12 @@
     <option value="User">User</option>
     <option value="OfficeAdmin">OfficeAdmin</option>
   </select>
-  <input type="number" bind:value={newUser.officeId} placeholder="Office ID" required />
+  <select bind:value={newUser.officeId} required>
+  <option value="" disabled selected>Select Office</option>
+  {#each offices as office}
+    <option value={office.id}>{office.name ?? `Office ${office.id}`}</option>
+  {/each}
+</select>
   <button type="submit">Add User</button>
 </form>
 
