@@ -1,18 +1,16 @@
-import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'env_selector.dart';
 import 'api.dart';
+import 'office_detail_page.dart';
 
 Future<void> main() async {
-
   try {
     await dotenv.load(fileName: getEnvFile());
   } catch (e) {
-    print("Warning: Failed to load .env file: $e");
+    debugPrint("Warning: Failed to load .env file: $e");
   }
-  
+
   runApp(const RebotApp());
 }
 
@@ -69,6 +67,17 @@ class _OfficeListPageState extends State<OfficeListPage> {
                     '${office['settings']['maxItemsPerUser']} items',
                     style: const TextStyle(fontSize: 12),
                   ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OfficeDetailPage(
+                          officeId: office['id'],
+                          officeName: office['name'],
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             );
