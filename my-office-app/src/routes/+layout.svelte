@@ -5,10 +5,15 @@
   import { page } from '$app/stores';
   import { authStore } from '$lib/stores/authStore';
   import { logout } from '$lib/auth';
+  import { derived } from 'svelte/store';
 
   let { children } = $props();
   let isAuthenticated = $state(false);
   let loggedInUser: { id: number; email: string; username: string; role: string } | null = $state(null);
+
+  const currentUser = derived(authStore, $auth => $auth.user);
+  const isAdmin = derived(currentUser, user => user?.role === 'Admin');
+  const isOfficeAdmin = derived(currentUser, user => user?.role === 'OfficeAdmin');
 
   // Subscribe to the authStore
   $effect(() => {
@@ -37,6 +42,10 @@
       <h1 class="text-xl font-bold">My Office App</h1>
       <nav class="flex items-center space-x-4">
         {#if isAuthenticated && loggedInUser}
+          <!-- Users menu link -->
+          {#if $isAdmin || $isOfficeAdmin}
+            <a href="/users" class="text-white hover:underline">User Management</a>
+          {/if}
           <span class="text-white text-sm">Welcome, {loggedInUser.username || loggedInUser.email}!</span>
           <button onclick={handleLogout} class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded">
             Logout

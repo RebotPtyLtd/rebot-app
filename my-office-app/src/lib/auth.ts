@@ -20,6 +20,7 @@ export function logout(): void {
   clearAuth();
 }
 
-export function setAuth(token: string, user: { id: number; email: string; username: string; role: string }) {
+// Add role to the payload
+export function setAuth(token: string, user: { id: number; email: string; username: string; role: string; OfficeId: number }) {
   setAuthStore(token, user);
 }

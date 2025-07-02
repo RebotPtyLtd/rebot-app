@@ -677,6 +677,72 @@
     },
     {
       "request": {
+        "method": "POST",
+        "url": "/api/auth/login",
+        "bodyPatterns": [
+          {
+            "equalToJson": "{\"email\": \"admin2@company.com\", \"password\": \"password123\"}",
+            "ignoreExtraElements": true
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        "jsonBody": {
+          "token": "mock-jwt-token-for-admin1",
+          "user": {
+            "id": 1,
+            "email": "admin2@company.com",
+            "username": "admin2",
+            "role": "OfficeAdmin",
+            "officeId": 2,
+            "permissions": [
+              "manage_users",
+              "manage_offices"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "url": "/api/auth/login",
+        "bodyPatterns": [
+          {
+            "equalToJson": "{\"email\": \"user1.office2@company.com\", \"password\": \"password123\"}",
+            "ignoreExtraElements": true
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        "jsonBody": {
+          "token": "mock-jwt-token-for-user1",
+          "user": {
+            "id": 1,
+            "email": "user1.office2@company.com",
+            "username": "user1_office_2",
+            "officeId": 2,
+            "role": "User",
+            "permissions": [
+              "create_items",
+              "create_comments"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "request": {
         "method": "GET",
         "url": "/api/auth/me",
         "headers": {
@@ -695,6 +761,7 @@
           "username": "admin1",
           "email": "admin1@company.com",
           "role": "Admin",
+          "officeId": 1,
           "permissions": [
             "create_office",
             "manage_users",

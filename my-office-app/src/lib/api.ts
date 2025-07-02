@@ -46,21 +46,24 @@ export async function fetchItemDetails(itemId: number) {
   return await res.json();
 }
 
-// USER MENU
-
+// USER MANAGEMENT
 export interface UserPayload {
   username: string;
   email: string;
-  role: 'User' | 'Admin' | string;
+  role: 'User' | 'Admin' | 'OfficeAdmin' | string;
   officeId: number;
   firstName: string;
   lastName: string;
 }
 
+// Call to the backend API to get all users
+
 export async function getUsers() {
   const res = await authenticatedFetch(`${BASE_URL}/users`);
   return await res.json();
 }
+
+// Call to the backend API to create user
 
 export async function createUser(user: UserPayload) {
   const res = await authenticatedFetch(`${BASE_URL}/users`, {
@@ -70,6 +73,8 @@ export async function createUser(user: UserPayload) {
   return await res.json();
 }
 
+// Call to the backend API to update user
+
 export async function updateUser(id: number, user: UserPayload) {
   const res = await authenticatedFetch(`${BASE_URL}/users/${id}`, {
     method: 'PUT',
@@ -77,6 +82,8 @@ export async function updateUser(id: number, user: UserPayload) {
   });
   return await res.json();
 }
+
+// Call to the backend API to delete user
 
 export async function deleteUser(id: number) {
   const res = await authenticatedFetch(`${BASE_URL}/users/${id}`, {
