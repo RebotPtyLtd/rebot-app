@@ -22,12 +22,13 @@
   let editingId: number | null = null;
   let deletedUserIds: number[] = [];
   let offices: { id: number, name?: string }[] = [];
-  let showSuccessModal = false;
+  let showCreateSuccessModal = false;
+  let showEditSuccessModal = false;
   let showConfirmModal = false;
   let showErrorModal = false;
   let showDeleteSuccessModal = false;
-  let showEmailValidateModal = true;
-  let showOfficeAdminModal = true
+  let showEmailValidateModal = false;
+  let showOfficeAdminModal = false;
   let createErrorMessage = '';
   let errorMessage = '';
   let userIdToDelete: number | null = null;
@@ -94,7 +95,7 @@
       users = [newUserWithId, ...users];
 
       newUser = { username: '', email: '', role: 'User', officeId: 1, firstName: '', lastName: '' };
-      showSuccessModal = true;
+      showCreateSuccessModal = true;
     } catch (err) {
       console.error('Failed to create user:', err);
     }
@@ -124,7 +125,7 @@
         const updatedUser = await updateUser(editingId, editUser);
         users = users.map(u => u.id === editingId ? { ...editUser, id: editingId } : u);
         editingId = null;
-        showSuccessModal = true;
+        showEditSuccessModal = true;
       } catch (err) {
         console.error(err);
       }
@@ -385,10 +386,18 @@
 {/if}
 
 <!-- modal for edit success -->
-{#if showSuccessModal}
+{#if showEditSuccessModal}
   <SuccessModal
     message = "User is updated."
-    onClose={() => showSuccessModal = false}
+    onClose={() => showEditSuccessModal = false}
+  />
+{/if}
+
+<!-- modal for edit success -->
+{#if showCreateSuccessModal}
+  <SuccessModal
+    message = "User is created successfully."
+    onClose={() => showCreateSuccessModal = false}
   />
 {/if}
 
