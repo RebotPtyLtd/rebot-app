@@ -18,6 +18,7 @@ services:
       context: ./my-office-app
       dockerfile: Dockerfile  
 
+    platform: linux/arm64
     container_name: sveltekit
     ports:
       - '5173:5173'
@@ -25,6 +26,8 @@ services:
       - ./my-office-app:/app
       - /app/node_modules
     working_dir: /app
-    command: npm run dev -- --host
+    environment:
+      - DOCKER_ENV=true
+    command: npm exec vite dev -- --host
     depends_on:
       - wiremock

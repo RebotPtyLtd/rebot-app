@@ -73,6 +73,12 @@ This will:
 
 ---
 
+## Test Credentials:
+
+    Email: admin@example.com
+
+    Password: password123
+
 ## 🧹 Stopping and Cleaning Up
 
 To stop the containers:
