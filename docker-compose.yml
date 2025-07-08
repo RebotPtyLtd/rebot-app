@@ -1,33 +1,36 @@
 version: '3.8'
 
 services:
+  sveltekit:
+    build:
+      context: ./my-office-app
+      dockerfile: Dockerfile
+    platform: linux/arm64
+    container_name: sveltekit
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - DOCKER_ENV=true
+    depends_on:
+      - wiremock
+    networks:
+      - app-network
+
   wiremock:
-    image: wiremock/wiremock:3.4.2
+    image: wiremock/wiremock:2.35.0
     container_name: wiremock
     ports:
       - '8080:8080'
     volumes:
-      - ./backend/wiremock-mappings.json:/home/wiremock/mappings/mapping.json
+      - ./backend/wiremock-mappings.json:/home/wiremock/mappings/mappings.json:ro
     command: [
       "--global-response-templating",
       "--verbose"
     ]
+    networks:
+      - app-network
 
-  sveltekit:
-    build:
-      context: ./my-office-app
-      dockerfile: Dockerfile  
-
-    platform: linux/arm64
-    container_name: sveltekit
-    ports:
-      - '5173:5173'
-    volumes:
-      - ./my-office-app:/app
-      - /app/node_modules
-    working_dir: /app
-    environment:
-      - DOCKER_ENV=true
-    command: npm exec vite dev -- --host
-    depends_on:
-      - wiremock
+networks:
+  app-network:
+    driver: bridge

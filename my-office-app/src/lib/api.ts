@@ -10,7 +10,7 @@ async function authenticatedFetch(url: string, options?: RequestInit) {
   };
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
   }
 
   const res = await fetch(url, { ...options, headers });
