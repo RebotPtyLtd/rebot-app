@@ -56,9 +56,9 @@ docker-compose up --build
 
 This will:
 - Launch **WireMock** on port `8080`
-- Start the **SvelteKit frontend** on port `5173`
+- Start the **SvelteKit frontend** on port `3000`
 
-> You can now open [http://localhost:5173](http://localhost:5173) in your browser to use the app.
+> You can now open [http://localhost:3000](http://localhost:3000) in your browser to use the app.
 
 
 ---
@@ -67,7 +67,7 @@ This will:
 
 | Service     | URL                         | Description            |
 |-------------|-----------------------------|------------------------|
-| Frontend    | http://localhost:5173       | SvelteKit UI          |
+| Frontend    | http://localhost:3000       | SvelteKit UI          |
 | Backend API | http://localhost:8080       | WireMock endpoints     |
 | WireMock UI | http://localhost:8080/__admin/ | WireMock dashboard |
 
@@ -104,9 +104,9 @@ docker-compose down --volumes --remove-orphans
 ## 🆘 Troubleshooting
 
 ### Port Conflicts?
-Ensure ports `5173` and `8080` are not already in use:
+Ensure ports `3000` and `8080` are not already in use:
 ```bash
-lsof -i :5173
+lsof -i :3000
 lsof -i :8080
 ```
 
