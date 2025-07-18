@@ -72,7 +72,7 @@ Environment-specific `.env` files are used to configure the API URL.
 |----------------|------------------|----------------------------------------|
 | Android        | `.env.mobile`    | `http://10.0.2.2:8080/api`             |
 | iOS Simulator  | `.env.mobile`    | `http://localhost:8080/api`            |
-| Web (Chrome)   | `.env.web`       | `http://localhost:5173/api` *(via proxy)* |
+| Web (Chrome)   | `.env.web`       | `http://localhost:3000/api` *(via proxy)* |
 | macOS Desktop  | `.env`           | `http://localhost:8080/api`            |
 
 These files are loaded automatically by `flutter_dotenv` in `main.dart`.
