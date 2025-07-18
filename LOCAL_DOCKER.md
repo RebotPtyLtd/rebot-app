@@ -5,7 +5,7 @@ This guide provides clear instructions for building, running, and testing the of
 ## 🏗️ Architecture
 
 The application consists of two main services:
-- **SvelteKit Frontend**: Office management web application
+- **SvelteKit Frontend**: Office management web application (with dev and prod versions)
 - **Wiremock API**: Mock backend API for development and testing
 
 ## 📋 Prerequisites
@@ -24,12 +24,15 @@ cd rebot-app
 
 ### 2. Build and Start Services
 ```bash
-# Build all services and start them
-docker-compose up --build -d
+# Build all services and start them (dev only, with watch)
+docker-compose up --build --watch
+
+# Start production service (and all dev dependencies)
+docker-compose --profile prod up --build
 
 # Or build without cache for a clean start
 docker-compose build --no-cache
-docker-compose up -d
+docker-compose up --watch
 ```
 
 ### 3. Verify Services Are Running
@@ -49,7 +52,8 @@ docker-compose logs -f
 docker-compose build
 
 # Build specific service
-docker-compose build sveltekit
+docker-compose build sveltekit-dev
+docker-compose build sveltekit-prod
 docker-compose build wiremock
 
 # Build without cache (clean build)
@@ -58,18 +62,30 @@ docker-compose build --no-cache
 
 ### Run Commands
 ```bash
-# Start all services in background
-docker-compose up -d
+# Start all dev services in foreground with watch (default)
+docker-compose up --watch
+
+# Start production service (and all dev dependencies)
+docker-compose --profile prod up
+
+# Start only dev or only prod
+# (dev is default, prod must be specified)
+docker-compose --profile dev up --watch
+docker-compose --profile prod up
 
 # Start specific service
-docker-compose up -d sveltekit
-docker-compose up -d wiremock
+# (e.g., just sveltekit-dev)
+docker-compose up --watch sveltekit-dev
+# (e.g., just sveltekit-prod)
+docker-compose --profile prod up sveltekit-prod
+# (e.g., just wiremock)
+docker-compose up wiremock
 
 # Start with logs visible
-docker-compose up
+docker-compose up --watch
 
 # Start specific service with logs
-docker-compose up sveltekit
+docker-compose up --watch sveltekit-dev
 ```
 
 ### Stop Commands
@@ -90,7 +106,8 @@ docker-compose down --rmi all
 docker-compose logs
 
 # View specific service logs
-docker-compose logs sveltekit
+docker-compose logs sveltekit-dev
+docker-compose logs sveltekit-prod
 docker-compose logs wiremock
 
 # Follow logs in real-time
@@ -104,17 +121,27 @@ docker-compose logs --tail=50
 
 ### Test API Endpoints
 ```bash
-# Test login API
+# Test login API (dev)
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "admin@example.com", "password": "password123"}'
 
-# Test offices API
-curl http://localhost:3000/api/offices
+# Test login API (prod)
+curl -X POST http://localhost:3500/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@example.com", "password": "password123"}'
 
-# Test authenticated endpoint
+# Test offices API (dev)
+curl http://localhost:3000/api/offices
+# Test offices API (prod)
+curl http://localhost:3500/api/offices
+
+# Test authenticated endpoint (dev)
 curl -H "Authorization: Bearer mock-jwt-token-for-admin" \
   http://localhost:3000/api/auth/me
+# Test authenticated endpoint (prod)
+curl -H "Authorization: Bearer mock-jwt-token-for-admin" \
+  http://localhost:3500/api/auth/me
 
 # Test Wiremock directly
 curl http://localhost:8080/api/offices
@@ -122,14 +149,20 @@ curl http://localhost:8080/api/offices
 
 ### Test Web Application
 ```bash
-# Test main page
+# Test main page (dev)
 curl http://localhost:3000/
+# Test main page (prod)
+curl http://localhost:3500/
 
-# Test login page
+# Test login page (dev)
 curl http://localhost:3000/login
+# Test login page (prod)
+curl http://localhost:3500/login
 
-# Test office detail page
+# Test office detail page (dev)
 curl http://localhost:3000/offices/1
+# Test office detail page (prod)
+curl http://localhost:3500/offices/1
 ```
 
 ### Health Checks
@@ -141,7 +174,8 @@ docker-compose ps
 docker stats
 
 # Check container logs for errors
-docker-compose logs sveltekit --tail=20
+docker-compose logs sveltekit-dev --tail=20
+docker-compose logs sveltekit-prod --tail=20
 docker-compose logs wiremock --tail=20
 ```
 
@@ -153,6 +187,7 @@ docker-compose logs wiremock --tail=20
 ```bash
 # Check what's using the ports
 lsof -i :3000
+lsof -i :3500
 lsof -i :8080
 
 # Kill processes if needed
@@ -162,7 +197,8 @@ kill -9 <PID>
 #### 2. Container Won't Start
 ```bash
 # Check container logs
-docker-compose logs sveltekit
+docker-compose logs sveltekit-dev
+docker-compose logs sveltekit-prod
 docker-compose logs wiremock
 
 # Rebuild from scratch
@@ -241,8 +277,10 @@ docker-compose logs -f wiremock
 
 ## 🌐 Access URLs
 
-- **Frontend Application**: http://localhost:3000/
-- **Login Page**: http://localhost:3000/login
+- **Frontend Application (dev)**: http://localhost:3000/
+- **Frontend Application (prod)**: http://localhost:3500/
+- **Login Page (dev)**: http://localhost:3000/login
+- **Login Page (prod)**: http://localhost:3500/login
 - **Wiremock API**: http://localhost:8080/
 - **Wiremock Admin**: http://localhost:8080/__admin/
 
@@ -263,7 +301,12 @@ rebot-app/
 
 ### 1. Start Development Environment
 ```bash
-docker-compose up -d
+docker-compose up --watch
+```
+
+### 1b. Start Production Environment
+```bash
+docker-compose --profile prod up
 ```
 
 ### 2. Make Code Changes
@@ -274,9 +317,10 @@ Edit files in `my-office-app/src/`
 # Rebuild and restart frontend
 docker-compose build sveltekit
 docker-compose up -d sveltekit
+docker-compose up sveltekit --watch
 
 # Or rebuild everything
-docker-compose build --no-cache
+docker-compose build sveltekit --no-cache
 docker-compose up -d
 ```
 
@@ -310,6 +354,7 @@ docker system prune -f
 
 ## 📝 Notes
 
+- The Docker Compose file uses profiles: `sveltekit-dev` is under the `dev` profile (default), and `sveltekit-prod` is under the `prod` profile (must be explicitly enabled). By default, only dev services run. Use `--profile prod` to run the production service.
 - The application uses `adapter-node` for production builds in Docker
 - API calls are proxied through SvelteKit server routes to Wiremock
 - The environment variable `DOCKER_ENV=true` is set in the container

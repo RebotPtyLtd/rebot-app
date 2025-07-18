@@ -51,12 +51,12 @@ rebot-app/
 
 ### 3. Start the App
 ```bash
-docker-compose up --build
+docker-compose --profile dev up --build --watch
 ```
 
 This will:
 - Launch **WireMock** on port `8080`
-- Start the **SvelteKit frontend** on port `3000`
+- Start the **SvelteKit frontend (development)** on port `3000`
 
 > You can now open [http://localhost:3000](http://localhost:3000) in your browser to use the app.
 
@@ -95,7 +95,7 @@ docker-compose down --volumes --remove-orphans
 
 ## 🧪 Tips for Developers
 - Edit files under `my-office-app/` to develop the UI.
-- The frontend watches for file changes and hot reloads in the container.
+- The dev frontend watches for file changes and hot reloads in the container.
 - Backend data is mock-only and lives in `backend/wiremock-mappings.json`.
 - Modify and regenerate mock data using `backend/data-generator.js`.
 
@@ -116,6 +116,10 @@ sudo usermod -aG docker $USER
 newgrp docker
 ```
 
+### Hot Reload not working on Windows with WSL2?
+Ensure you cloned the repo to /home/$USER as WSL2 has issues with the notification system when files are located outside
+the WSL2 instance (eg in /mnt/c/*)
+Also make sure you're running docker-compose up --profile dev -w - the -w flag tells Docker to run the watch process.
 ---
 
 Happy hacking! 🚀
