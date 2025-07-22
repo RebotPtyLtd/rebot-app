@@ -1,21 +1,53 @@
 version: '3.8'
 
 services:
-  sveltekit:
+  sveltekit-dev:
+    profiles: ["dev"]
     build:
       context: ./my-office-app
       dockerfile: Dockerfile
+      target: development
     platform: linux/arm64
-    container_name: sveltekit
+    container_name: sveltekit-dev
     ports:
       - '3000:3000'
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - DOCKER_ENV=true
+      - WATCHPACK_POLLING=true
     depends_on:
       - wiremock
     networks:
       - app-network
+    develop:
+      watch:
+        - action: sync
+          path: ./my-office-app
+          target: /app
+          ignore:
+            - .git
+            - node_modules
+    command: npm run dev -- --host 0.0.0.0 --port 3000
+
+  sveltekit-prod:
+    profiles: ["prod"]
+    build:
+      context: ./my-office-app
+      dockerfile: Dockerfile
+      target: production
+    platform: linux/arm64
+    container_name: sveltekit-prod
+    ports:
+      - '3500:3500'
+    environment:
+      - NODE_ENV=production
+      - DOCKER_ENV=true
+      - PORT=3500
+    depends_on:
+      - wiremock
+    networks:
+      - app-network
+    command: node build
 
   wiremock:
     image: wiremock/wiremock:2.35.0
