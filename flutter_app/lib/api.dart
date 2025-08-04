@@ -1,69 +1,52 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'models/office.dart';
+import 'models/item.dart';
+import 'models/comment.dart';
+import 'models/user.dart';
 
-final String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost:8080/api';
+final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost:8080/api';
 
-Future<List<dynamic>> fetchOffices() async {
-  final res = await http.get(Uri.parse('$baseUrl/offices'));
+Future<List<Office>> fetchOffices() async {
+  final res = await http.get(Uri.parse('$_baseUrl/offices'));
 
   if (res.statusCode != 200) {
     throw Exception('Failed to load offices');
   }
-
-  final body = json.decode(res.body);
-  return body['offices'];
+  final data = json.decode(res.body)['offices'] as List;
+  return data.map((e) => Office.fromJson(e)).toList();
 }
 
-Future<Map<String, dynamic>> fetchOfficeDetails(int officeId) async {
-  final res = await http.get(Uri.parse('$baseUrl/offices/$officeId'));
-
-  if (res.statusCode != 200) {
-    throw Exception('Failed to load office details');
-  }
-
-  return json.decode(res.body);
+Future<Office> fetchOfficeDetails(int id) async {
+  final res = await http.get(Uri.parse('$_baseUrl/offices/$id'));
+  if (res.statusCode != 200) throw Exception('Failed to load office');
+  return Office.fromJson(json.decode(res.body));
 }
 
-Future<List<dynamic>> fetchOfficeItems(int officeId) async {
-  final res = await http.get(Uri.parse('$baseUrl/offices/$officeId/items'));
-
-  if (res.statusCode != 200) {
-    throw Exception('Failed to load office items');
-  }
-
-  final body = json.decode(res.body);
-  return body['items'];
+Future<List<Item>> fetchOfficeItems(int id) async {
+  final res = await http.get(Uri.parse('$_baseUrl/offices/$id/items'));
+  if (res.statusCode != 200) throw Exception('Failed to load items');
+  final data = json.decode(res.body)['items'] as List;
+  return data.map((e) => Item.fromJson(e)).toList();
 }
 
-Future<List<dynamic>> fetchItemComments(int itemId) async {
-  final res = await http.get(Uri.parse('$baseUrl/items/$itemId/comments'));
-
-  if (res.statusCode != 200) {
-    throw Exception('Failed to load item comments');
-  }
-
-  final body = json.decode(res.body);
-  return body['comments'];
+Future<Item> fetchItemDetails(int id) async {
+  final res = await http.get(Uri.parse('$_baseUrl/items/$id'));
+  if (res.statusCode != 200) throw Exception('Failed to load item');
+  return Item.fromJson(json.decode(res.body));
 }
 
-Future<Map<String, dynamic>> fetchItemDetails(int itemId) async {
-  final res = await http.get(Uri.parse('$baseUrl/items/$itemId'));
-
-  if (res.statusCode != 200) {
-    throw Exception('Failed to load item details');
-  }
-
-  return json.decode(res.body);
+Future<List<Comment>> fetchItemComments(int id) async {
+  final res = await http.get(Uri.parse('$_baseUrl/items/$id/comments'));
+  if (res.statusCode != 200) throw Exception('Failed to load comments');
+  final data = json.decode(res.body)['comments'] as List;
+  return data.map((e) => Comment.fromJson(e)).toList();
 }
 
-Future<List<dynamic>> fetchUsers() async {
-  final res = await http.get(Uri.parse('$baseUrl/users'));
-
-  if (res.statusCode != 200) {
-    throw Exception('Failed to load users');
-  }
-
-  final body = json.decode(res.body);
-  return body['users'];
+Future<List<User>> fetchUsers() async {
+  final res = await http.get(Uri.parse('$_baseUrl/users'));
+  if (res.statusCode != 200) throw Exception('Failed to load users');
+  final data = json.decode(res.body)['users'] as List;
+  return data.map((e) => User.fromJson(e)).toList();
 }
