@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rebot_flutter_app/models/item.dart';
 import 'api.dart';
 import 'item_detail_page.dart';
+import 'models/office.dart';
 
 class OfficeDetailPage extends StatefulWidget {
   final int officeId;
@@ -17,9 +19,8 @@ class OfficeDetailPage extends StatefulWidget {
 }
 
 class _OfficeDetailPageState extends State<OfficeDetailPage> {
-  late Future<Map<String, dynamic>> officeDetailsFuture;
-  late Future<List<dynamic>> itemsFuture;
-
+  late Future<Office> officeDetailsFuture;
+  late Future<List<Item>> itemsFuture;
   @override
   void initState() {
     super.initState();
@@ -27,13 +28,12 @@ class _OfficeDetailPageState extends State<OfficeDetailPage> {
     itemsFuture = fetchOfficeItems(widget.officeId);
   }
 
-  Future<Map<String, dynamic>> _getOfficeFromList() async {
+  Future<Office> _getOfficeFromList() async {
     final offices = await fetchOffices();
-    final office = offices.firstWhere(
-      (office) => office['id'] == widget.officeId,
+    return offices.firstWhere(
+      (o) => o.id == widget.officeId,
       orElse: () => throw Exception('Office not found'),
     );
-    return office;
   }
 
   @override
@@ -43,7 +43,7 @@ class _OfficeDetailPageState extends State<OfficeDetailPage> {
       body: Column(
         children: [
           // Office Details Section
-          FutureBuilder<Map<String, dynamic>>(
+          FutureBuilder<Office>(
             future: officeDetailsFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -72,7 +72,7 @@ class _OfficeDetailPageState extends State<OfficeDetailPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        office['name'],
+                        office.name,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -80,19 +80,19 @@ class _OfficeDetailPageState extends State<OfficeDetailPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        office['address'],
+                        office.address,
                         style: const TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Max items per user: ${office['settings']['maxItemsPerUser']}',
+                        'Max items per user: ${office.settings.maxItemsPerUser}',
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
                       ),
                       Text(
-                        'Timezone: ${office['settings']['timezone']}',
+                        'Timezone: ${office.settings.timezone}',
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
@@ -106,7 +106,7 @@ class _OfficeDetailPageState extends State<OfficeDetailPage> {
           ),
           // Items Section
           Expanded(
-            child: FutureBuilder<List<dynamic>>(
+            child: FutureBuilder<List<Item>>(
               future: itemsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -154,7 +154,7 @@ class _OfficeDetailPageState extends State<OfficeDetailPage> {
                     ],
                   );
                 } else {
-                  final items = snapshot.data!;
+                  final List<Item> items = snapshot.data!;
 
                   return Column(
                     children: [
@@ -178,15 +178,11 @@ class _OfficeDetailPageState extends State<OfficeDetailPage> {
                               )
                             : Builder(
                                 builder: (context) {
-                                  final sortedItems = List<dynamic>.from(items);
+                                  final sortedItems = List<Item>.from(items);
                                   sortedItems.sort((a, b) {
                                     try {
-                                      final dateA = DateTime.parse(
-                                        a['createdAt'],
-                                      );
-                                      final dateB = DateTime.parse(
-                                        b['createdAt'],
-                                      );
+                                      final dateA = DateTime.parse(a.createdAt);
+                                      final dateB = DateTime.parse(b.createdAt);
                                       return dateB.compareTo(dateA);
                                     } catch (e) {
                                       return 0;
@@ -204,9 +200,9 @@ class _OfficeDetailPageState extends State<OfficeDetailPage> {
                                           bottom: 8.0,
                                         ),
                                         child: ListTile(
-                                          title: Text(item['title']),
+                                          title: Text(item.title),
                                           subtitle: Text(
-                                            item['description'],
+                                            item.description,
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -219,8 +215,8 @@ class _OfficeDetailPageState extends State<OfficeDetailPage> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     ItemDetailPage(
-                                                      itemId: item['id'],
-                                                      itemTitle: item['title'],
+                                                      itemId: item.id,
+                                                      itemTitle: item.title,
                                                     ),
                                               ),
                                             );
