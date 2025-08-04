@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'api.dart';
+import 'models/item.dart';
+import 'models/comment.dart';
+import 'models/user.dart';
 
 class ItemDetailPage extends StatefulWidget {
   final int itemId;
@@ -16,9 +19,9 @@ class ItemDetailPage extends StatefulWidget {
 }
 
 class _ItemDetailPageState extends State<ItemDetailPage> {
-  late Future<Map<String, dynamic>> itemDetailsFuture;
-  late Future<List<dynamic>> commentsFuture;
-  late Future<List<dynamic>> usersFuture;
+  late Future<Item> itemDetailsFuture;
+  late Future<List<Comment>> commentsFuture;
+  late Future<List<User>> usersFuture;
 
   @override
   void initState() {
@@ -28,19 +31,15 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     usersFuture = fetchUsers();
   }
 
-  String _getUserInitials(Map<String, dynamic> user) {
-    final firstName = user['firstName'] ?? '';
-    final lastName = user['lastName'] ?? '';
-    final firstInitial = firstName.isNotEmpty ? firstName[0].toUpperCase() : '';
-    final lastInitial = lastName.isNotEmpty ? lastName[0].toUpperCase() : '';
-    return '$firstInitial$lastInitial';
+  String _getUserInitials(User user) {
+    final firstName = user.firstName ?? '';
+    final lastName = user.lastName ?? '';
+    return '${firstName.isNotEmpty ? firstName[0].toUpperCase() : ''}'
+        '${lastName.isNotEmpty ? lastName[0].toUpperCase() : ''}';
   }
 
-  String _getUserName(Map<String, dynamic> user) {
-    final firstName = user['firstName'] ?? '';
-    final lastName = user['lastName'] ?? '';
-    return '$firstName $lastName'.trim();
-  }
+  String _getUserName(User user) =>
+      '${user.firstName ?? ''} ${user.lastName ?? ''}'.trim();
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +47,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       appBar: AppBar(title: Text(widget.itemTitle)),
       body: Column(
         children: [
-          FutureBuilder<List<dynamic>>(
+          FutureBuilder<List<Object>>(
             future: Future.wait([itemDetailsFuture, usersFuture]),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -74,15 +73,12 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                   child: Text('Error loading item: ${snapshot.error}'),
                 );
               } else {
-                final item = snapshot.data![0];
-                final users = snapshot.data![1];
+                final item = snapshot.data![0] as Item;
+                final users = snapshot.data![1] as List<User>;
 
-                final userMap = <int, Map<String, dynamic>>{};
-                for (final user in users) {
-                  userMap[user['id']] = user;
-                }
+                final userMap = {for (var u in users) u.id: u};
 
-                final creator = userMap[item['createdBy']];
+                final creator = userMap[item.createdBy];
                 final creatorName = creator != null
                     ? _getUserName(creator)
                     : 'Unknown User';
@@ -99,7 +95,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item['title'],
+                        item.title,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -107,7 +103,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        item['description'],
+                        item.description,
                         style: const TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 8),
@@ -119,15 +115,15 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                         ),
                       ),
                       Text(
-                        'Created: ${_formatDate(item['createdAt'])}',
+                        'Created: ${_formatDate(item.createdAt)}',
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
                       ),
-                      if (item['updatedAt'] != null)
+                      if (item.updatedAt != null)
                         Text(
-                          'Updated: ${_formatDate(item['updatedAt'])}',
+                          'Updated: ${_formatDate(item.updatedAt!)}',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
@@ -141,7 +137,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
           ),
           // Comments Section
           Expanded(
-            child: FutureBuilder<List<List<dynamic>>>(
+            child: FutureBuilder<List<Object>>(
               future: Future.wait([commentsFuture, usersFuture]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -191,13 +187,11 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                     ],
                   );
                 } else {
-                  final comments = snapshot.data![0];
-                  final users = snapshot.data![1];
+                  final List<Comment> comments =
+                      snapshot.data![0] as List<Comment>;
+                  final List<User> users = snapshot.data![1] as List<User>;
 
-                  final userMap = <int, Map<String, dynamic>>{};
-                  for (final user in users) {
-                    userMap[user['id']] = user;
-                  }
+                  final userMap = {for (var u in users) u.id: u};
 
                   return Column(
                     children: [
@@ -221,29 +215,20 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                               )
                             : Builder(
                                 builder: (context) {
-                                  final sortedComments = List<dynamic>.from(
-                                    comments,
-                                  );
-                                  sortedComments.sort((a, b) {
-                                    try {
-                                      final dateA = DateTime.parse(
-                                        a['createdAt'],
+                                  final sortedComments =
+                                      List<Comment>.from(comments)..sort(
+                                        (a, b) => DateTime.parse(b.createdAt)
+                                            .compareTo(
+                                              DateTime.parse(a.createdAt),
+                                            ),
                                       );
-                                      final dateB = DateTime.parse(
-                                        b['createdAt'],
-                                      );
-                                      return dateB.compareTo(dateA);
-                                    } catch (e) {
-                                      return 0;
-                                    }
-                                  });
 
                                   return ListView.builder(
                                     padding: const EdgeInsets.all(16.0),
                                     itemCount: sortedComments.length,
                                     itemBuilder: (context, index) {
                                       final comment = sortedComments[index];
-                                      final user = userMap[comment['userId']];
+                                      final user = userMap[comment.userId];
                                       final userInitials = user != null
                                           ? _getUserInitials(user)
                                           : 'U';
@@ -288,7 +273,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                                   const Spacer(),
                                                   Text(
                                                     _formatDate(
-                                                      comment['createdAt'],
+                                                      comment.createdAt,
                                                     ),
                                                     style: const TextStyle(
                                                       fontSize: 12,
@@ -298,7 +283,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                                 ],
                                               ),
                                               const SizedBox(height: 8),
-                                              Text(comment['content']),
+                                              Text(comment.content),
                                             ],
                                           ),
                                         ),

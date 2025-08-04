@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'env_selector.dart';
 import 'api.dart';
+import 'models/office.dart';
 import 'office_detail_page.dart';
 
 Future<void> main() async {
   try {
     await dotenv.load(fileName: getEnvFile());
   } catch (e) {
-    debugPrint("Warning: Failed to load .env file: $e");
+    debugPrint('Warning: Failed to load .env file: $e');
   }
 
   runApp(const RebotApp());
@@ -35,7 +36,7 @@ class OfficeListPage extends StatefulWidget {
 }
 
 class _OfficeListPageState extends State<OfficeListPage> {
-  late Future<List<dynamic>> officesFuture;
+  late Future<List<Office>> officesFuture;
 
   @override
   void initState() {
@@ -47,7 +48,7 @@ class _OfficeListPageState extends State<OfficeListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Offices')),
-      body: FutureBuilder<List<dynamic>>(
+      body: FutureBuilder<List<Office>>(
         future: officesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -61,19 +62,19 @@ class _OfficeListPageState extends State<OfficeListPage> {
               itemBuilder: (context, index) {
                 final office = offices[index];
                 return ListTile(
-                  title: Text(office['name']),
-                  subtitle: Text(office['address']),
+                  title: Text(office.name),
+                  subtitle: Text(office.address),
                   trailing: Text(
-                    '${office['settings']['maxItemsPerUser']} items',
+                    '${office.settings.maxItemsPerUser} items',
                     style: const TextStyle(fontSize: 12),
                   ),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => OfficeDetailPage(
-                          officeId: office['id'],
-                          officeName: office['name'],
+                        builder: (_) => OfficeDetailPage(
+                          officeId: office.id,
+                          officeName: office.name,
                         ),
                       ),
                     );
