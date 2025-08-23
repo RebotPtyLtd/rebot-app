@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'models/office.dart';
-import 'models/item.dart';
-import 'models/comment.dart';
-import 'models/user.dart';
+import 'package:rebot_flutter_app/models/office.dart';
+import 'package:rebot_flutter_app/models/item.dart';
+import 'package:rebot_flutter_app/models/comment.dart';
+import 'package:rebot_flutter_app/models/user.dart';
 
 final String _baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost:8080/api';
 

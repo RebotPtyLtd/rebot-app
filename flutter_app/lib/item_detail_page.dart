@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'api.dart';
-import 'models/item.dart';
-import 'models/comment.dart';
-import 'models/user.dart';
+import 'package:rebot_flutter_app/api.dart';
+import 'package:rebot_flutter_app/models/item.dart';
+import 'package:rebot_flutter_app/models/comment.dart';
+import 'package:rebot_flutter_app/models/user.dart';
 
 class ItemDetailPage extends StatefulWidget {
   final int itemId;

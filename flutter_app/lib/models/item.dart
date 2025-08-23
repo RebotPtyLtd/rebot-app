@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'comment.dart';
+import 'package:rebot_flutter_app/models/comment.dart';
 
 part 'item.g.dart';
 

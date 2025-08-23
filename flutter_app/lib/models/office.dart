@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'item.dart';
+import 'package:rebot_flutter_app/models/item.dart';
 
 part 'office.g.dart';
 
