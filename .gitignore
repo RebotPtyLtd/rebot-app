@@ -2,3 +2,6 @@
 
 # Environment files
 .env
+
+# FVM Version Cache
+.fvm/

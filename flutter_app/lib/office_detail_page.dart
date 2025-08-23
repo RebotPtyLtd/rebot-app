@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rebot_flutter_app/models/item.dart';
-import 'api.dart';
-import 'item_detail_page.dart';
-import 'models/office.dart';
+import 'package:rebot_flutter_app/api.dart';
+import 'package:rebot_flutter_app/item_detail_page.dart';
+import 'package:rebot_flutter_app/models/office.dart';
 
 class OfficeDetailPage extends StatefulWidget {
   final int officeId;
