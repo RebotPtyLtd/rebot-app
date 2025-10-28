@@ -24,10 +24,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   void _onRememberMeToggled(RememberMeToggled event, Emitter<LoginState> emit) {
     emit(state.copyWith(rememberMe: !state.rememberMe));
   }
+
   Future<void> _onFormSubmitted(
-      FormSubmitted event,
-      Emitter<LoginState> emit,
-      ) async {
+    FormSubmitted event,
+    Emitter<LoginState> emit,
+  ) async {
     emit(state.copyWith(isSubmitting: true));
     if (event.email.isEmpty || event.password.isEmpty) {
       emit(
@@ -51,12 +52,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        email: event.email,
-        password: event.password,
-      )
-    );
+    emit(state.copyWith(email: event.email, password: event.password));
 
     try {
       await _login(emit);
@@ -71,22 +67,26 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-
-
   Future<void> _login(Emitter<LoginState> emit) async {
     await _authRepository?.login(state.email, state.password).then((va) {
       if (va.statusCode == 200) {
         emit(state.copyWith(isSubmitting: false, isSuccess: true));
-        _credentialRepository?.saveCredentials(state.email, state.password);
+
+        // Only save if Remember Me is checked
+        if (state.rememberMe) {
+          _credentialRepository?.saveCredentials(state.email, state.password);
+        } else {
+          // Clear any previously saved credentials
+          _credentialRepository?.clearCredentials();
+        }
       } else {
-        if(va.statusCode == 500){
+        if (va.statusCode == 500) {
           final Map<String, dynamic> responseBody = jsonDecode(va.body);
           emit(
             state.copyWith(
               isSubmitting: false,
               isSuccess: false,
               errorMessage: responseBody['error'],
-
             ),
           );
           return;
@@ -100,6 +100,25 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         );
       }
     });
+  }
+
+  Future<void> _loginWithException(Emitter<LoginState> emit) async {
+    final response = await _authRepository?.login(state.email, state.password);
+
+    if (response?.statusCode == 200) {
+      emit(state.copyWith(isSubmitting: false, isSuccess: true));
+
+      // Only save if Remember Me is checked
+      if (state.rememberMe) {
+        _credentialRepository?.saveCredentials(state.email, state.password);
+      } else {
+        // Clear any previously saved credentials
+        _credentialRepository?.clearCredentials();
+      }
+    } else {
+      // Throw exception for auto-login error handling
+      throw Exception('Login failed with status: ${response?.statusCode}');
+    }
   }
 
   Future<void> _loadCredentials(
@@ -116,9 +135,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           email: email,
           password: password,
           rememberMe: true,
+          isSubmitting: true, // Show loading indicator
           isSuccess: false,
         ),
       );
+
+      // Automatically attempt login with a brief delay for UI feedback
+      try {
+        await Future.delayed(
+          const Duration(seconds: 2),
+        ); // Show "Logging you in..." for 2 seconds
+        await _loginWithException(emit);
+      } catch (e) {
+        // If auto-login fails, show form with credentials pre-filled
+        emit(
+          state.copyWith(
+            isSubmitting: false,
+            isSuccess: false,
+            errorMessage: 'Auto-login failed. Please login manually.',
+          ),
+        );
+      }
     }
   }
 
