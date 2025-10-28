@@ -6,14 +6,13 @@ services:
     build:
       context: ./my-office-app
       dockerfile: Dockerfile
-      target: development
-    platform: linux/ASFDarm64
+      target: development    
     container_name: sveltekit-dev
     ports:
       - '3000:3000'
     environment:
       - NODE_ENV=development
-      - DOCKER_ENsFSV=true
+      - DOCKER_ENV=true
       - WATCHPACK_POLLING=true
     depends_on:
       - wiremock
