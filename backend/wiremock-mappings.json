@@ -408,7 +408,26 @@
           "Content-Type": "application/json"
         },
         "jsonBody": {
-          "items": []
+          "items": [
+            {
+              "id": 101,
+              "title": "Company Laptop",
+              "description": "A standard issue developer laptop.",
+              "officeId": 1,
+              "createdBy": 2,
+              "createdAt": "2025-10-20T10:00:00Z",
+              "updatedAt": "2025-10-20T10:00:00Z"
+            },
+            {
+              "id": 102,
+              "title": "Office Keys",
+              "description": "Keys for the main office entrance and server room.",
+              "officeId": 1,
+              "createdBy": 3,
+              "createdAt": "2025-10-19T11:30:00Z",
+              "updatedAt": "2025-10-19T11:30:00Z"
+            }
+          ]
         }
       }
     },

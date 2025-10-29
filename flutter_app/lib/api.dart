@@ -50,3 +50,23 @@ Future<List<User>> fetchUsers() async {
   final data = json.decode(res.body)['users'] as List;
   return data.map((e) => User.fromJson(e)).toList();
 }
+
+Future<void> postComment({
+  required int itemId,
+  required int userId,
+  required String content,
+  required String token,
+}) async {
+  final response = await http.post(
+    Uri.parse('$_baseUrl/comments'),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+    body: json.encode({'itemId': itemId, 'userId': userId, 'content': content}),
+  );
+
+  if (response.statusCode != 201) {
+    throw Exception('Failed to post comment');
+  }
+}
