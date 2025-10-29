@@ -65,7 +65,7 @@
 <div class="hero min-h-screen bg-base-100">
   <div class="hero-content flex-col lg:flex-row-reverse">
     <div class="text-center lg:text-left">
-      <h1 class="text-5xl font-bold text-primary">Login now!</h1>
+      <h1 class="text-5xl font-bold text-primary">Welcome!</h1>
       <p class="py-6">Access your office management portal.</p>
     </div>
     <div class="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
@@ -73,7 +73,7 @@
         <h2 class="text-2xl font-bold text-center text-primary mb-6">Login</h2>
         <div class="form-control">
           <label for="email" class="label">
-            <span class="label-text">Email</span>
+            <span class="label-text">Email Address</span>
           </label>
           <input
             type="email"
