@@ -22,7 +22,6 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
 
-
   late LoginAnimations animations;
 
   @override
@@ -70,6 +69,21 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
               const SizedBox(height: 30),
               BlocBuilder<LoginBloc, LoginState>(
                 builder: (context, state) {
+                  // Show loading indicator during auto-login
+                  if (state.isSubmitting &&
+                      state.email.isNotEmpty &&
+                      emailController.text.isEmpty) {
+                    return const Center(
+                      child: Column(
+                        children: [
+                          CircularLoader(),
+                          SizedBox(height: 16),
+                          Text('Logging you in...'),
+                        ],
+                      ),
+                    );
+                  }
+
                   return state.isSubmitting
                       ? const Center(child: CircularLoader())
                       : Center(
