@@ -1,9 +1,10 @@
 <script lang="ts">
+  import Header from '$lib/components/Header.svelte';
   import '../app.css';
-  
-  let { children } = $props();
 </script>
 
-<div class="min-h-screen">
-  {@render children()}
-</div>
+<Header />
+
+<main class="container mx-auto p-4">
+  <slot />
+</main>

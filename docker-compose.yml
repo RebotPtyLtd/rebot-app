@@ -6,7 +6,7 @@ services:
     build:
       context: ./my-office-app
       dockerfile: Dockerfile
-      target: development
+      target: development    
     container_name: sveltekit-dev
     ports:
       - '3000:3000'
